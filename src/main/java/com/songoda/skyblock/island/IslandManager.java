@@ -1,5 +1,7 @@
 package com.songoda.skyblock.island;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Containers.CMIUser;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
@@ -1155,7 +1157,7 @@ public class IslandManager {
 
             if (islandOwnerUUID != null && islandOwnerUUID.equals(island.getOwnerUUID())) {
                 if (playerData.getOwner() == null || !playerData.getOwner().equals(island.getOwnerUUID())) {
-                    if (Bukkit.getServer().getPlayer(playerDataStorageList) != null) {
+                    if (Bukkit.getServer().getPlayer(playerDataStorageList) != null && !Bukkit.getServer().getPlayer(playerDataStorageList).hasPermission("skyblock.admin")) {
                         islandVisitors.add(playerDataStorageList);
                     }
                 }
@@ -1279,7 +1281,8 @@ public class IslandManager {
     public Island getIsland(org.bukkit.OfflinePlayer offlinePlayer) {
         PlayerDataManager playerDataManager = plugin.getPlayerDataManager();
 
-        UUID uuid = offlinePlayer.getUniqueId();
+        CMIUser user = CMI.getInstance().getPlayerManager().getUser(offlinePlayer);
+        UUID uuid = user.getUniqueId();
         if (islandProxies.containsKey(uuid)) uuid = islandProxies.get(uuid);
 
         // TODO: Find out how this can be fixed without this, for some reason
@@ -1301,7 +1304,7 @@ public class IslandManager {
                 }
             }
         } else {
-            OfflinePlayer offlinePlayerData = new OfflinePlayer(offlinePlayer.getUniqueId());
+            OfflinePlayer offlinePlayerData = new OfflinePlayer(user.getUniqueId());
             loadIsland(offlinePlayer);
 
             if (offlinePlayerData.getOwner() != null && islandStorage.containsKey(offlinePlayerData.getOwner())) {

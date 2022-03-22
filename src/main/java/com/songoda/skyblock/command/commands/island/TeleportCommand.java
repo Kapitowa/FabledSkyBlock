@@ -1,5 +1,7 @@
 package com.songoda.skyblock.command.commands.island;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Containers.CMIUser;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.skyblock.command.SubCommand;
 import com.songoda.skyblock.config.FileManager.Config;
@@ -37,7 +39,8 @@ public class TeleportCommand extends SubCommand {
         FileConfiguration configLoad = config.getFileConfiguration();
 
         if (args.length == 1) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+            CMIUser user = CMI.getInstance().getPlayerManager().getUser(args[0]);
+            OfflinePlayer offlinePlayer = user.getOfflinePlayer();
             Island island = islandManager.getIsland(offlinePlayer);
             if (island == null) {
                 messageManager.sendMessage(player, configLoad.getString("Command.Island.Teleport.Island.None.Message", "Command.Island.Teleport.Island.None.Message"));

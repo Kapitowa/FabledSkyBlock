@@ -265,5 +265,12 @@
             <scope>provided</scope>
             <version>4.9.0.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.cmi</groupId>
+            <artifactId>cmi</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/CMIAPI.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>
