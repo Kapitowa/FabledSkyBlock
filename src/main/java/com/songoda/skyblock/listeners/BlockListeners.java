@@ -780,23 +780,24 @@ public class BlockListeners implements Listener {
         new BukkitRunnable()
         {
             @Override
-            public void run()
-            {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
+            public void run() {
 
-                        IslandManager islandManager = plugin.getIslandManager();
-                        Island island = islandManager.getIslandAtLocation(e.getBlock().getLocation());
+                IslandManager islandManager = plugin.getIslandManager();
+                Island island = islandManager.getIslandAtLocation(e.getBlock().getLocation());
 
 
-                        if (island == null)
-                            return;
+                if (island == null)
+                    return;
 
-                        if (islandManager.getMembersOnline(island).size() == 0)
-                            e.setNewCurrent(0);
+                Set<UUID> membersOnline = new HashSet<>();
+
+                for (Player all : Bukkit.getOnlinePlayers()) {
+                    if (island.hasRole(IslandRole.Member, all.getUniqueId()) || island.hasRole(IslandRole.Operator, all.getUniqueId()) || island.hasRole(IslandRole.Owner, all.getUniqueId())) {
+                        membersOnline.add(all.getUniqueId());
                     }
-                }.runTaskLater(plugin, 20L * 30L /*<-- the delay */);
+
+                    if (membersOnline.size() == 0)
+                        e.setNewCurrent(0);
 
                 /*for (Player all : Bukkit.getOnlinePlayers()) {
                     if (island.hasRole(IslandRole.Member, all.getUniqueId()) || island.hasRole(IslandRole.Operator, all.getUniqueId()) || island.hasRole(IslandRole.Owner, all.getUniqueId())) {
@@ -806,6 +807,7 @@ public class BlockListeners implements Listener {
                         else e.setNewCurrent(0);
                     }
                 }*/
+                }
             }
         }.runTaskAsynchronously(this.plugin);
     }

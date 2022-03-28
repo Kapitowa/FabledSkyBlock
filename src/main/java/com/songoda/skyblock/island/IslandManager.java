@@ -1293,10 +1293,11 @@ public class IslandManager {
             return islandStorage.get(uuid);
         }
 
-        if (offlinePlayer.isOnline() && user != null) {
+        Player player = offlinePlayer.getPlayer();
+        if (offlinePlayer.isOnline() && player != null) {
 
-            if (playerDataManager.hasPlayerData(user.getUniqueId())) {
-                PlayerData playerData = playerDataManager.getPlayerData(user.getUniqueId());
+            if (playerDataManager.hasPlayerData(player)) {
+                PlayerData playerData = playerDataManager.getPlayerData(player);
 
                 if (playerData.getOwner() != null && islandStorage.containsKey(playerData.getOwner())) {
                     return islandStorage.get(playerData.getOwner());
