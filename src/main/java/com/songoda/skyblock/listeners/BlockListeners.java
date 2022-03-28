@@ -782,15 +782,21 @@ public class BlockListeners implements Listener {
             @Override
             public void run()
             {
-                IslandManager islandManager = plugin.getIslandManager();
-                Island island = islandManager.getIslandAtLocation(e.getBlock().getLocation());
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+
+                        IslandManager islandManager = plugin.getIslandManager();
+                        Island island = islandManager.getIslandAtLocation(e.getBlock().getLocation());
 
 
-                if (island == null)
-                    return;
+                        if (island == null)
+                            return;
 
-                if (islandManager.getMembersOnline(island).size() == 0)
-                    e.setNewCurrent(0);
+                        if (islandManager.getMembersOnline(island).size() == 0)
+                            e.setNewCurrent(0);
+                    }
+                }.runTaskLater(plugin, 20L * 30L /*<-- the delay */);
 
                 /*for (Player all : Bukkit.getOnlinePlayers()) {
                     if (island.hasRole(IslandRole.Member, all.getUniqueId()) || island.hasRole(IslandRole.Operator, all.getUniqueId()) || island.hasRole(IslandRole.Owner, all.getUniqueId())) {
