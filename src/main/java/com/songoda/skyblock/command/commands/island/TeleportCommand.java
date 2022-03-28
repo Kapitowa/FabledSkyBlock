@@ -39,14 +39,19 @@ public class TeleportCommand extends SubCommand {
         FileConfiguration configLoad = config.getFileConfiguration();
 
         if (args.length == 1) {
+            if (CMI.getInstance().getPlayerManager().getUser(args[0]) == null) {
+                messageManager.sendMessage(player, configLoad.getString("Command.Island.Teleport.Island.None.Message"));
+                soundManager.playSound(player, CompatibleSound.BLOCK_ANVIL_LAND.getSound(), 1.0F, 1.0F);
+                return;
+            }
             CMIUser user = CMI.getInstance().getPlayerManager().getUser(args[0]);
-            OfflinePlayer offlinePlayer = user.getOfflinePlayer();
+            OfflinePlayer offlinePlayer = user.getPlayer();
             Island island = islandManager.getIsland(offlinePlayer);
             if (island == null) {
                 messageManager.sendMessage(player, configLoad.getString("Command.Island.Teleport.Island.None.Message", "Command.Island.Teleport.Island.None.Message"));
                 soundManager.playSound(player, CompatibleSound.BLOCK_ANVIL_LAND.getSound(), 1.0F, 1.0F);
 
-                if (plugin.getIslandManager().getIsland(player) == null) {
+                if (plugin.getIslandManager().getIsland(offlinePlayer) == null) {
                     String commandToExecute = configLoad.getString("Command.IslandTeleport.Aliases.NoIsland", "");
                     if (!commandToExecute.equals(""))
                         Bukkit.dispatchCommand(player, commandToExecute);

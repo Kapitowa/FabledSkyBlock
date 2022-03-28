@@ -1,5 +1,7 @@
 package com.songoda.skyblock.listeners;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Containers.CMIUser;
 import com.google.common.collect.Lists;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
@@ -766,6 +768,28 @@ public class BlockListeners implements Listener {
                 level.removeMaterial(destmaterial.name());
             } else {
                 level.setMaterialAmount(destmaterial.name(), materialAmount - 1);
+            }
+        }
+    }
+
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onBlockRedstone(BlockRedstoneEvent e) {
+        IslandManager islandManager = plugin.getIslandManager();
+
+        Island island = islandManager.getIslandAtLocation(e.getBlock().getLocation());
+
+        if (island == null)
+            return;
+
+        if (islandManager.getMembersOnline(island).size() == 0)
+            e.setNewCurrent(0);
+
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            if (island.hasRole(IslandRole.Member, all.getUniqueId()) || island.hasRole(IslandRole.Operator, all.getUniqueId()) || island.hasRole(IslandRole.Owner, all.getUniqueId())) {
+                if (CMI.getInstance().getPlayerManager().getUser(all.getPlayer().getUniqueId()).isAfk()) {
+                    e.setNewCurrent(0);
+                }
             }
         }
     }
