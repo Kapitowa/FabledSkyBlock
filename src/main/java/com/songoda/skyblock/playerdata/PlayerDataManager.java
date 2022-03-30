@@ -1,5 +1,7 @@
 package com.songoda.skyblock.playerdata;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Containers.CMIUser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.songoda.skyblock.SkyBlock;
@@ -121,7 +123,8 @@ public class PlayerDataManager {
     }
 
     public PlayerData getPlayerData(Player player) {
-        return getPlayerData(player.getUniqueId());
+        CMIUser user = CMI.getInstance().getPlayerManager().getUser(player);
+        return getPlayerData(user.getUniqueId());
     }
 
     public boolean hasPlayerData(Player player) {
