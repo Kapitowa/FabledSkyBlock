@@ -1,4 +1,10 @@
 <p align="center">
+  <b>
+      Fork of FabledSkyBlock with custom CMI uuid support for offline servers + some performance improvements
+  </b>
+</p>
+
+<p align="center">
 <img alt="FabledSkyblock"
     src="https://proxy.songoda.com/200/https://cdn2.songoda.com/products/fabledskyblock/iVa2K5aURiwKfwYkNZUkJ7UH0SGkHwz3JnBGVeBX.png">
 </p>
