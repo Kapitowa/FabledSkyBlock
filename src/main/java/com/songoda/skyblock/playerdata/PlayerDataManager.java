@@ -122,7 +122,7 @@ public class PlayerDataManager {
         return playerDataStorage.containsKey(uuid);
     }
 
-    public PlayerData getPlayerData(Player player) {
+    public PlayerData getPlayerData(Player player) { //fix
         CMIUser user = CMI.getInstance().getPlayerManager().getUser(player);
         return getPlayerData(user.getUniqueId());
     }
