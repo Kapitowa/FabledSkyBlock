@@ -27,6 +27,7 @@ import org.bukkit.WeatherType;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -583,22 +584,24 @@ public class Island {
     }
 
     public Set<UUID> getRole(IslandRole role) {
+        BukkitScheduler scheduler = Bukkit.getScheduler();
         Set<UUID> islandRoles = new HashSet<>();
+        scheduler.runTaskAsynchronously(plugin,() -> {
 
-        if (role == IslandRole.Owner) {
-            islandRoles.add(getOwnerUUID());
-        } else {
-            Config config = plugin.getFileManager().getConfig(
-                    new File(new File(plugin.getDataFolder().toString() + "/island-data"), ownerUUID.toString() + ".yml"));
-            FileConfiguration configLoad = config.getFileConfiguration();
+            if (role == IslandRole.Owner) {
+                islandRoles.add(getOwnerUUID());
+            } else {
+                Config config = plugin.getFileManager().getConfig(
+                        new File(new File(plugin.getDataFolder().toString() + "/island-data"), ownerUUID.toString() + ".yml"));
+                FileConfiguration configLoad = config.getFileConfiguration();
 
-            if (configLoad.getString(role.name() + "s") != null) {
-                for (String playerList : configLoad.getStringList(role.name() + "s")) {
-                    islandRoles.add(FastUUID.parseUUID(playerList));
+                if (configLoad.getString(role.name() + "s") != null) {
+                    for (String playerList : configLoad.getStringList(role.name() + "s")) {
+                        islandRoles.add(FastUUID.parseUUID(playerList));
+                    }
                 }
             }
-        }
-
+        });
         return islandRoles;
     }
 

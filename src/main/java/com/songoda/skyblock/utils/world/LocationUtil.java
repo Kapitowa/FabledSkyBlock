@@ -58,7 +58,7 @@ public final class LocationUtil {
                 }
             }
             if (found) {
-                locChecked = locChecked.add(0d,1d,0d);
+                locChecked = locChecked.add(0d,0d,0d);
             } else {
                 locChecked = null;
             }
