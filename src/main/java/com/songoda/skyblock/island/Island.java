@@ -583,7 +583,7 @@ public class Island {
                 .getFileConfiguration().getBoolean("AlwaysLoaded", false);
     }
 
-    public Set<UUID> getRole(IslandRole role) {//
+    public Set<UUID> getRole(IslandRole role) {
         Set<UUID> islandRoles = new HashSet<>();
 
             if (role == IslandRole.Owner) {
