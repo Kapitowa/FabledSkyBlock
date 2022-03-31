@@ -584,9 +584,7 @@ public class Island {
     }
 
     public Set<UUID> getRole(IslandRole role) {
-        BukkitScheduler scheduler = Bukkit.getScheduler();
         Set<UUID> islandRoles = new HashSet<>();
-        scheduler.runTaskAsynchronously(plugin,() -> {
 
             if (role == IslandRole.Owner) {
                 islandRoles.add(getOwnerUUID());
@@ -601,7 +599,6 @@ public class Island {
                     }
                 }
             }
-        });
         return islandRoles;
     }
 
