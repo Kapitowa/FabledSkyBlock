@@ -1,5 +1,6 @@
 package com.songoda.skyblock.command.commands.admin;
 
+import com.sk89q.worldedit.WorldEdit;
 import com.songoda.core.compatibility.CompatibleBiome;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.skyblock.biome.BiomeManager;
@@ -7,6 +8,7 @@ import com.songoda.skyblock.command.SubCommand;
 import com.songoda.skyblock.config.FileManager;
 import com.songoda.skyblock.config.FileManager.Config;
 import com.songoda.skyblock.island.Island;
+import com.songoda.skyblock.island.IslandEnvironment;
 import com.songoda.skyblock.island.IslandManager;
 import com.songoda.skyblock.island.IslandWorld;
 import com.songoda.skyblock.message.MessageManager;
@@ -95,6 +97,7 @@ public class SetBiomeCommand extends SubCommand {
                         biomeManager.setBiome(island, world, biome, null);
                         if (world.equals(IslandWorld.Normal)) {
                             island.setBiome(biome.getBiome());
+                            island.getLocation(world, IslandEnvironment.Island);
                         }
                     } else {
                         islandManager.loadIsland(Bukkit.getOfflinePlayer(islandOwnerUUID));

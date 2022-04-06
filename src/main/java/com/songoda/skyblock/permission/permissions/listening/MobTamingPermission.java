@@ -8,6 +8,7 @@ import com.songoda.skyblock.permission.PermissionHandler;
 import com.songoda.skyblock.permission.PermissionType;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 
@@ -35,17 +36,11 @@ public class MobTamingPermission extends ListeningPermission {
     }
 
     @PermissionHandler
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        Entity entity = event.getEntity();
-        EntityType type = event.getEntityType();
-
-        if (type == EntityType.ARMOR_STAND || type == EntityType.PLAYER || entity instanceof Monster) return;
+    public void onEntityDamageByEntity(EntityTameEvent event) {
 
         Player player;
-        if (event.getDamager() instanceof Player)
-            player = (Player)event.getDamager();
-        else if (event.getDamager() instanceof Projectile && ((Projectile) event.getDamager()).getShooter() instanceof Player)
-            player = (Player) ((Projectile) event.getDamager()).getShooter();
+        if (event.getOwner() instanceof Player)
+            player = (Player)event.getOwner();
         else return;
 
         cancelAndMessage(event, player, plugin, messageManager);

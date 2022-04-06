@@ -1699,6 +1699,7 @@ public class IslandManager {
 
     public boolean isLocationAtIsland(Island island, org.bukkit.Location location, IslandWorld world) {
         Location islandLocation = island.getLocation(world, IslandEnvironment.Island);
+
         if (islandLocation != null && location.getWorld().equals(islandLocation.getWorld())) {
             double locIncrement = island.getSize() % 2d != 0d ? 0.50d + Double.MIN_VALUE : -Double.MIN_VALUE;
             return LocationUtil.isLocationInLocationRadius(

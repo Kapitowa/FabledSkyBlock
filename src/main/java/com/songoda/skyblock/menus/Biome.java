@@ -133,7 +133,6 @@ public class Biome {
                             return;
                         }
 
-                        @SuppressWarnings("deprecation")
                         SBiome selectedBiomeType = SBiome.getFromGuiIcon(is.getType(), is.getData().getData());
 
                         cooldownManager.createPlayer(CooldownType.Biome, player);

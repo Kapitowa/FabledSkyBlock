@@ -773,45 +773,6 @@ public class BlockListeners implements Listener {
         }
     }
 
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    public void onBlockRedstone(BlockRedstoneEvent e) {
-
-        new BukkitRunnable()
-        {
-            @Override
-            public void run() {
-
-                IslandManager islandManager = plugin.getIslandManager();
-                Island island = islandManager.getIslandAtLocation(e.getBlock().getLocation());
-
-
-                if (island == null)
-                    return;
-
-                Set<UUID> membersOnline = new HashSet<>();
-
-                for (Player all : Bukkit.getOnlinePlayers()) {
-                    if (island.hasRole(IslandRole.Member, all.getUniqueId()) || island.hasRole(IslandRole.Operator, all.getUniqueId()) || island.hasRole(IslandRole.Owner, all.getUniqueId())) {
-                        membersOnline.add(all.getUniqueId());
-                    }
-
-                    if (membersOnline.size() == 0)
-                        e.setNewCurrent(0);
-
-                /*for (Player all : Bukkit.getOnlinePlayers()) {
-                    if (island.hasRole(IslandRole.Member, all.getUniqueId()) || island.hasRole(IslandRole.Operator, all.getUniqueId()) || island.hasRole(IslandRole.Owner, all.getUniqueId())) {
-                        if (!CMI.getInstance().getPlayerManager().getUser(all.getPlayer().getUniqueId()).isAfk()) {
-                            return;
-                        }
-                        else e.setNewCurrent(0);
-                    }
-                }*/
-                }
-            }
-        }.runTaskAsynchronously(this.plugin);
-    }
-
     public boolean handleGeneration(Block block, Island island, BlockState state) {
         WorldManager worldManager = plugin.getWorldManager();
         IslandLevelManager islandLevelManager = plugin.getLevellingManager();

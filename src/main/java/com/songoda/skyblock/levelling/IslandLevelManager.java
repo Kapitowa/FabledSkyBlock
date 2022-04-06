@@ -78,9 +78,9 @@ public final class IslandLevelManager {
         if (island.isRegionUnlocked(null, IslandWorld.End))
             queuedIslandScan.addToScan(IslandWorld.End);
 
-        queuedIslandScan.scan();
+        //queuedIslandScan.scan();
 
-        inScan.put(island, queuedIslandScan);
+        //inScan.put(island, queuedIslandScan);
     }
 
     public boolean isScanning(Island island) {

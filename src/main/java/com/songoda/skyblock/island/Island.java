@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 
 public class Island {
 
@@ -584,6 +585,7 @@ public class Island {
     }
 
     public Set<UUID> getRole(IslandRole role) {
+
         Set<UUID> islandRoles = new HashSet<>();
 
             if (role == IslandRole.Owner) {

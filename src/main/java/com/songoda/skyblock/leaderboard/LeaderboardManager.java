@@ -1,5 +1,7 @@
 package com.songoda.skyblock.leaderboard;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Containers.CMIUser;
 import com.songoda.skyblock.SkyBlock;
 import com.songoda.skyblock.island.IslandWorld;
 import com.songoda.skyblock.leaderboard.leaderheads.TopBank;
@@ -79,6 +81,7 @@ public class LeaderboardManager {
     }
 
     public int getPlayerIslandLeaderboardPosition(OfflinePlayer offlinePlayer, Leaderboard.Type type) {
+        CMIUser user = CMI.getInstance().getPlayerManager().getUser(offlinePlayer);
         VisitManager visitManager = plugin.getVisitManager();
         visitManager.loadIslands();
 
@@ -107,7 +110,7 @@ public class LeaderboardManager {
         leaderboardPlayers.sort(Comparator.comparingLong(LeaderboardPlayer::getValue).reversed());
 
         for (int i = 0; i < leaderboardPlayers.size(); i++) {
-            if (leaderboardPlayers.get(i).getUUID().equals(offlinePlayer.getUniqueId())) {
+            if (leaderboardPlayers.get(i).getUUID().equals(user.getUniqueId())) {
                 return i + 1;
             }
         }
