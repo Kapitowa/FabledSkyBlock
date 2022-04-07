@@ -1,0 +1,46 @@
+Index: src/main/java/com/songoda/skyblock/placeholder/PlaceholderProcessor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/com/songoda/skyblock/placeholder/PlaceholderProcessor.java b/src/main/java/com/songoda/skyblock/placeholder/PlaceholderProcessor.java
+--- a/src/main/java/com/songoda/skyblock/placeholder/PlaceholderProcessor.java	(revision 76ca128ab843ce6a567fdbb64dec40fd7b58f2a0)
++++ b/src/main/java/com/songoda/skyblock/placeholder/PlaceholderProcessor.java	(revision 6c1d61ce3fa356ce77cb4bd7a7c101f3343cf1b8)
+@@ -345,7 +345,8 @@
+                     value = 1;
+                 }
+     
+-                if (value > 0 && value < leaderboardVotesPlayers.size()) {
++                if (value > 0 && value - 1 < leaderboardVotesPlayers.size()) {
++                    value --;
+                     Leaderboard leaderboard = leaderboardVotesPlayers.get(value);
+                     Visit visit = leaderboard.getVisit();
+         
+@@ -360,7 +361,7 @@
+     
+                     returnValue = TextUtils.formatText(
+                             placeholdersLoad.getString("Placeholders.fabledskyblock_leaderboard_votes.Non-empty")
+-                                    .replace("{POSITION}", "" + (value))
++                                    .replace("{POSITION}", "" + (value + 1))
+                                     .replace("{PLAYER}", islandOwnerName)
+                                     .replace("{VOTES}", NumberUtils.formatNumber(visit.getVoters().size())));
+                 } else {
+@@ -379,7 +380,8 @@
+                     value = 1;
+                 }
+     
+-                if (value > 0 && value < leaderboardBankPlayers.size()) {
++                if (value > 0 && value - 1 < leaderboardBankPlayers.size()) {
++                    value --;
+                     Leaderboard leaderboard = leaderboardBankPlayers.get(value);
+                     Visit visit = leaderboard.getVisit();
+         
+@@ -394,7 +396,7 @@
+         
+                     returnValue = TextUtils.formatText(
+                             placeholdersLoad.getString("Placeholders.fabledskyblock_leaderboard_bank.Non-empty")
+-                                    .replace("{POSITION}", "" + (value))
++                                    .replace("{POSITION}", "" + (value + 1))
+                                     .replace("{PLAYER}", islandOwnerName)
+                                     .replace("{BALANCE}", NumberUtils.formatNumber(visit.getBankBalance())));
+                 } else {

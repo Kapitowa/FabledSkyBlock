@@ -1,5 +1,7 @@
 package com.songoda.skyblock.listeners;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Containers.CMIUser;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.skyblock.SkyBlock;
 import com.songoda.skyblock.challenge.player.PlayerManager;
@@ -38,7 +40,8 @@ public class QuitListeners implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
+        Player player1 = event.getPlayer();
+        CMIUser player = CMI.getInstance().getPlayerManager().getUser(player1);
 
         PlayerDataManager playerDataManager = plugin.getPlayerDataManager();
         CooldownManager cooldownManager = plugin.getCooldownManager();
@@ -48,24 +51,24 @@ public class QuitListeners implements Listener {
         ScoreboardManager scoreboardManager = plugin.getScoreboardManager();
         PlayerManager challengePlayerManager = plugin.getFabledChallenge().getPlayerManager();
 
-        PlayerData playerData = playerDataManager.getPlayerData(player);
+        PlayerData playerData = playerDataManager.getPlayerData(player.getPlayer());
 
         try {
             playerData.setLastOnline(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()));
         } catch (Exception ignored) {}
 
-        Island island = islandManager.getIsland(player);
+        Island island = islandManager.getIsland(player.getPlayer());
 
         if (island != null) {
             Set<UUID> islandMembersOnline = islandManager.getMembersOnline(island);
 
             if (islandMembersOnline.size() == 1) {
-                OfflinePlayer offlinePlayer = Bukkit.getServer().getOfflinePlayer(island.getOwnerUUID());
-                cooldownManager.setCooldownPlayer(CooldownType.Levelling, offlinePlayer);
-                cooldownManager.removeCooldownPlayer(CooldownType.Levelling, offlinePlayer);
+                CMIUser offlinePlayer = CMI.getInstance().getPlayerManager().getUser(island.getOwnerUUID());
+                cooldownManager.setCooldownPlayer(CooldownType.Levelling, offlinePlayer.getPlayer());
+                cooldownManager.removeCooldownPlayer(CooldownType.Levelling, offlinePlayer.getPlayer());
 
-                cooldownManager.setCooldownPlayer(CooldownType.Ownership, offlinePlayer);
-                cooldownManager.removeCooldownPlayer(CooldownType.Ownership, offlinePlayer);
+                cooldownManager.setCooldownPlayer(CooldownType.Ownership, offlinePlayer.getPlayer());
+                cooldownManager.removeCooldownPlayer(CooldownType.Ownership, offlinePlayer.getPlayer());
             } else if (islandMembersOnline.size() == 2) {
                 for (UUID islandMembersOnlineList : islandMembersOnline) {
                     if (!islandMembersOnlineList.equals(player.getUniqueId())) {
@@ -82,20 +85,20 @@ public class QuitListeners implements Listener {
             }
 
             final Island is = island;
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> islandManager.unloadIsland(is, player));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> islandManager.unloadIsland(is, player.getPlayer()));
         }
 
-        cooldownManager.setCooldownPlayer(CooldownType.Biome, player);
-        cooldownManager.removeCooldownPlayer(CooldownType.Biome, player);
+        cooldownManager.setCooldownPlayer(CooldownType.Biome, player.getPlayer());
+        cooldownManager.removeCooldownPlayer(CooldownType.Biome, player.getPlayer());
 
-        cooldownManager.setCooldownPlayer(CooldownType.Creation, player);
-        cooldownManager.removeCooldownPlayer(CooldownType.Creation, player);
+        cooldownManager.setCooldownPlayer(CooldownType.Creation, player.getPlayer());
+        cooldownManager.removeCooldownPlayer(CooldownType.Creation, player.getPlayer());
 
-        cooldownManager.setCooldownPlayer(CooldownType.Deletion, player);
-        cooldownManager.removeCooldownPlayer(CooldownType.Deletion, player);
+        cooldownManager.setCooldownPlayer(CooldownType.Deletion, player.getPlayer());
+        cooldownManager.removeCooldownPlayer(CooldownType.Deletion, player.getPlayer());
 
-        playerDataManager.savePlayerData(player);
-        playerDataManager.unloadPlayerData(player);
+        playerDataManager.savePlayerData(player.getPlayer());
+        playerDataManager.unloadPlayerData(player.getPlayer());
 
         boolean offline = true;
         if(island != null && this.plugin.getConfiguration()
@@ -118,7 +121,7 @@ public class QuitListeners implements Listener {
             challengePlayerManager.unloadPlayer(player.getUniqueId());
         }
 
-        for (Island islandList : islandManager.getCoopIslands(player)) {
+        for (Island islandList : islandManager.getCoopIslands(player.getPlayer())) {
             if (this.plugin.getConfiguration()
                     .getBoolean("Island.Coop.Unload") || islandList.getCoopType(player.getUniqueId()) == IslandCoop.TEMP) {
                 islandList.removeCoopPlayer(player.getUniqueId());
@@ -126,7 +129,7 @@ public class QuitListeners implements Listener {
         }
 
         if (playerData != null && playerData.getIsland() != null && islandManager.containsIsland(playerData.getIsland())) {
-            island = islandManager.getIsland(Bukkit.getServer().getOfflinePlayer(playerData.getIsland()));
+            island = islandManager.getIsland(CMI.getInstance().getPlayerManager().getUser(playerData.getIsland()).getOfflinePlayer());
 
             if (!island.hasRole(IslandRole.Member, player.getUniqueId())
                     && !island.hasRole(IslandRole.Operator, player.getUniqueId())
@@ -150,7 +153,7 @@ public class QuitListeners implements Listener {
 
             inviteManager.removeInvite(player.getUniqueId());
         }
-        scoreboardManager.unregisterPlayer(player);
+        scoreboardManager.unregisterPlayer(player.getPlayer());
         // Unload Challenge
         SkyBlock.getInstance().getFabledChallenge().getPlayerManager().unloadPlayer(event.getPlayer().getUniqueId());
     }
