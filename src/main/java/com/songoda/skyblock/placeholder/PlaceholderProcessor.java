@@ -345,7 +345,8 @@ public class PlaceholderProcessor {
                     value = 1;
                 }
     
-                if (value > 0 && value < leaderboardVotesPlayers.size()) {
+                if (value > 0 && value - 1 < leaderboardVotesPlayers.size()) {
+                    value --;
                     Leaderboard leaderboard = leaderboardVotesPlayers.get(value);
                     Visit visit = leaderboard.getVisit();
         
@@ -360,7 +361,7 @@ public class PlaceholderProcessor {
     
                     returnValue = TextUtils.formatText(
                             placeholdersLoad.getString("Placeholders.fabledskyblock_leaderboard_votes.Non-empty")
-                                    .replace("{POSITION}", "" + (value))
+                                    .replace("{POSITION}", "" + (value + 1))
                                     .replace("{PLAYER}", islandOwnerName)
                                     .replace("{VOTES}", NumberUtils.formatNumber(visit.getVoters().size())));
                 } else {
@@ -379,7 +380,8 @@ public class PlaceholderProcessor {
                     value = 1;
                 }
     
-                if (value > 0 && value < leaderboardBankPlayers.size()) {
+                if (value > 0 && value - 1 < leaderboardBankPlayers.size()) {
+                    value --;
                     Leaderboard leaderboard = leaderboardBankPlayers.get(value);
                     Visit visit = leaderboard.getVisit();
         
@@ -394,7 +396,7 @@ public class PlaceholderProcessor {
         
                     returnValue = TextUtils.formatText(
                             placeholdersLoad.getString("Placeholders.fabledskyblock_leaderboard_bank.Non-empty")
-                                    .replace("{POSITION}", "" + (value))
+                                    .replace("{POSITION}", "" + (value + 1))
                                     .replace("{PLAYER}", islandOwnerName)
                                     .replace("{BALANCE}", NumberUtils.formatNumber(visit.getBankBalance())));
                 } else {
