@@ -126,7 +126,7 @@ public class Stackable {
 
         if (this.size > 1) {
 
-            if (display == null || !display.isValid()) {
+            if (display == null && !display.isValid()) {
                 this.createDisplay();
             } else {
                 this.display.setCustomName(this.getCustomName());
