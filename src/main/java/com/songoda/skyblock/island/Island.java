@@ -1,5 +1,7 @@
 package com.songoda.skyblock.island;
 
+import com.Zrips.CMI.CMI;
+import com.Zrips.CMI.Containers.CMIUser;
 import com.eatthepath.uuid.FastUUID;
 import com.songoda.core.compatibility.CompatibleBiome;
 import com.songoda.core.compatibility.CompatibleSound;
@@ -57,11 +59,12 @@ public class Island {
 
     public Island(@Nonnull OfflinePlayer player) {
         this.plugin = SkyBlock.getInstance();
+        CMIUser user = CMI.getInstance().getPlayerManager().getUser(player);
 
         FileManager fileManager = plugin.getFileManager();
 
         this.islandUUID = UUID.randomUUID();
-        this.ownerUUID = player.getUniqueId();
+        this.ownerUUID = user.getUniqueId();
         this.size = this.plugin.getConfiguration().getInt("Island.Size.Minimum");
         this.maxMembers =  this.plugin.getConfiguration().getInt("Island.Member.Capacity", 3);
 
@@ -69,9 +72,9 @@ public class Island {
             this.size = 50;
         }
 
-        if (player.isOnline()) {
-            int customSize = PlayerUtils.getNumberFromPermission(player.getPlayer(), "fabledskyblock.size", 0);
-            if (customSize > 0 || player.getPlayer().hasPermission("fabledskyblock.*")) {
+        if (user.isOnline()) {
+            int customSize = PlayerUtils.getNumberFromPermission(user.getPlayer(), "fabledskyblock.size", 0);
+            if (customSize > 0 || user.getPlayer().hasPermission("fabledskyblock.*")) {
                 FileConfiguration configLoad = this.plugin.getConfiguration();
 
                 int minimumSize = configLoad.getInt("Island.Size.Minimum");

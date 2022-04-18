@@ -678,21 +678,22 @@ public class IslandManager {
         VisitManager visitManager = plugin.getVisitManager();
         FileManager fileManager = plugin.getFileManager();
         BanManager banManager = plugin.getBanManager();
+        CMIUser user = CMI.getInstance().getPlayerManager().getUser(player);
 
         UUID islandOwnerUUID = null;
 
-        Config config = fileManager.getConfig(new File(new File(plugin.getDataFolder().toString() + "/player-data"), player.getUniqueId().toString() + ".yml"));
+        Config config = fileManager.getConfig(new File(new File(plugin.getDataFolder().toString() + "/player-data"), user.getUniqueId().toString() + ".yml"));
         FileConfiguration configLoad = config.getFileConfiguration();
 
-        if (isIslandExist(player.getUniqueId())) {
-            if (configLoad.getString("Island.Owner") == null || !configLoad.getString("Island.Owner").equals(player.getUniqueId().toString())) {
-                deleteIslandData(player.getUniqueId());
+        if (isIslandExist(user.getUniqueId())) {
+            if (configLoad.getString("Island.Owner") == null || !configLoad.getString("Island.Owner").equals(user.getUniqueId().toString())) {
+                deleteIslandData(user.getUniqueId());
                 configLoad.set("Island.Owner", null);
 
                 return;
             }
 
-            islandOwnerUUID = player.getUniqueId();
+            islandOwnerUUID = user.getUniqueId();
         } else {
             if (configLoad.getString("Island.Owner") != null) {
                 islandOwnerUUID = FastUUID.parseUUID(configLoad.getString("Island.Owner"));
@@ -709,7 +710,7 @@ public class IslandManager {
                 return;
             }
         
-            Island island = new Island(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID));
+            Island island = new Island(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer());
             islandStorage.put(islandOwnerUUID, island);
         
             for (IslandWorld worldList : IslandWorld.getIslandWorlds()) {
@@ -825,7 +826,7 @@ public class IslandManager {
             return;
         }
     
-        Island island = new Island(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID));
+        Island island = new Island(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer());
         islandStorage.put(islandOwnerUUID, island);
     
         for (IslandWorld worldList : IslandWorld.getIslandWorlds()) {

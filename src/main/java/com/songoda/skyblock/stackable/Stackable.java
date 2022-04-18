@@ -6,8 +6,10 @@ import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.skyblock.SkyBlock;
 import com.songoda.skyblock.config.FileManager;
 import com.songoda.core.utils.NumberUtils;
+import io.papermc.lib.PaperLib;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
@@ -122,8 +124,14 @@ public class Stackable {
     private void updateDisplay() {
         // The chunk needs to be loaded otherwise the getNearbyEntities() in
         // removeDisplay() won't find anything
-        if (!this.location.getWorld().isChunkLoaded(this.location.getBlockX() >> 4, this.location.getBlockZ() >> 4)) this.location.getChunk().load();
+        if (!this.location.getWorld().isChunkLoaded(this.location.getBlockX() >> 4, this.location.getBlockZ() >> 4)) {
 
+            try {
+                PaperLib.getChunkAtAsync(this.location).get().load();
+            }
+            catch(Exception e) {
+            }
+        }
         if (this.size > 1) {
 
             if (display == null || !display.isValid()) {
