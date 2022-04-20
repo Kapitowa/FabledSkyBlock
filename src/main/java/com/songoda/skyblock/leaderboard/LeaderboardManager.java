@@ -49,7 +49,7 @@ public class LeaderboardManager {
                 .getBoolean("Island.Leaderboard.Exemptions.Enable");
 
         for (UUID ownerUUID : new LinkedHashSet<>(visitManager.getIslands().keySet())) {
-            if (enableExemptions && VaultPermissions.hasPermission(worldManager.getWorld(IslandWorld.Normal).getName(), CMI.getInstance().getPlayerManager().getUser(ownerUUID).getPlayer(), "fabledskyblock.top.exempt"))
+            if (enableExemptions && VaultPermissions.hasPermission(worldManager.getWorld(IslandWorld.Normal).getName(), CMI.getInstance().getPlayerManager().getUser(ownerUUID).getOfflinePlayer(), "fabledskyblock.top.exempt"))
                 continue;
 
             Visit visit = visitManager.getIslands().get(ownerUUID);

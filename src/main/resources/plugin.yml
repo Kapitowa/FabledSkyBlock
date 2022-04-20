@@ -8,6 +8,7 @@ authors: [ Fabrimat ]
 softdepend: [ HolographicDisplays, Holograms, PlaceholderAPI, Vault, Reserve, PlayerPoints,
               LeaderHeads, EpicSpawners, UltimateStacker, WorldEdit, Residence, CoreProtect, CMIEInjector ]
 loadbefore: [Multiverse-Core, ProtocolLib]
+depend: [CMI]
 commands:
   island:
     description: Island command
