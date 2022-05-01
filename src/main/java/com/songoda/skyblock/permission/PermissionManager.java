@@ -221,25 +221,25 @@ public class PermissionManager {
         if (player.hasPermission("fabledskyblock.bypass." + permission.getName().toLowerCase()))
             return !reversePermission;
 
-        FileConfiguration configLoad = SkyBlock.getInstance().getConfiguration();
+        //FileConfiguration configLoad = SkyBlock.getInstance().getConfiguration();
 
         switch (island.getRole(player)) {
             case Owner:
-                if (!configLoad.getBoolean("Island.Settings.OwnersAndOperatorsAsMembers", false)) {
+                //if (!configLoad.getBoolean("Island.Settings.OwnersAndOperatorsAsMembers", false)) {
                     if (permission.getType().equals(PermissionType.ISLAND)) {
                         return island.hasPermission(IslandRole.Owner, permission);
                     } else {
                         return true;
                     }
-                }
+                //}
             case Operator:
-                if (!configLoad.getBoolean("Island.Settings.OwnersAndOperatorsAsMembers", false)) {
+                //if (!configLoad.getBoolean("Island.Settings.OwnersAndOperatorsAsMembers", false)) {
                     if (permission.getType().equals(PermissionType.OPERATOR)) {
                         return island.hasPermission(IslandRole.Operator, permission);
                     } else {
                         return true;
                     }
-                }
+                //}
             case Member:
                 return island.hasPermission(IslandRole.Member, permission);
             case Coop:
