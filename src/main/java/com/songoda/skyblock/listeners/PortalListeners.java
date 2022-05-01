@@ -42,21 +42,25 @@ public class PortalListeners implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        org.bukkit.block.Block from = event.getFrom().getBlock();
-        org.bukkit.block.Block to = event.getTo().getBlock();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                Player player = event.getPlayer();
+                org.bukkit.block.Block from = event.getFrom().getBlock();
+                org.bukkit.block.Block to = event.getTo().getBlock();
 
-        IslandManager islandManager = plugin.getIslandManager();
+                IslandManager islandManager = plugin.getIslandManager();
 
-        if (from.getX() == to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()) return;
+                if (from.getX() == to.getX() && from.getY() == to.getY() && from.getZ() == to.getZ()) return;
 
-        Island island = islandManager.getIslandAtLocation(to.getLocation());
+                Island island = islandManager.getIslandAtLocation(to.getLocation());
+                if (island == null) return;
 
-        if (island == null) return;
-
-        // Check permissions.
-        plugin.getPermissionManager().processPermission(event, player,
-                islandManager.getIslandAtLocation(event.getTo()));
+                // Check permissions.
+                plugin.getPermissionManager().processPermission(event, player,
+                        islandManager.getIslandAtLocation(event.getTo()));
+            }
+        });
     }
 
     @EventHandler(priority = EventPriority.LOW)
