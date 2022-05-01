@@ -393,46 +393,48 @@ public class InteractListeners implements Listener {
         MessageManager messageManager = plugin.getMessageManager();
         SoundManager soundManager = plugin.getSoundManager();
 
-        if (event.getItem() != null) {
-            try {
-                if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-                    ItemStack structureTool = StructureUtil.getTool();
+        if (player.hasPermission("fabledskyblock.admin.structure.selection")) {
+            if (event.getItem() != null) {
+                try {
+                    if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                        ItemStack structureTool = StructureUtil.getTool();
 
-                    if ((event.getItem().getType() == structureTool.getType()) && (event.getItem().hasItemMeta()) && (event.getItem().getItemMeta().getDisplayName()
-                            .equals(structureTool.getItemMeta().getDisplayName()))) {
-                        if (player.hasPermission("fabledskyblock.admin.structure.selection") || player.hasPermission("fabledskyblock.admin.structure.*") || player
-                                .hasPermission("fabledskyblock.admin.*")
-                                || player.hasPermission("fabledskyblock.*")) {
-                            event.setCancelled(true);
+                        if ((event.getItem().getType() == structureTool.getType()) && (event.getItem().hasItemMeta()) && (event.getItem().getItemMeta().getDisplayName()
+                                .equals(structureTool.getItemMeta().getDisplayName()))) {
+                            if (player.hasPermission("fabledskyblock.admin.structure.selection") || player.hasPermission("fabledskyblock.admin.structure.*") || player
+                                    .hasPermission("fabledskyblock.admin.*")
+                                    || player.hasPermission("fabledskyblock.*")) {
+                                event.setCancelled(true);
 
-                            plugin.getPlayerDataManager().getPlayerData(player).getArea().setPosition(1, event.getClickedBlock().getLocation());
+                                plugin.getPlayerDataManager().getPlayerData(player).getArea().setPosition(1, event.getClickedBlock().getLocation());
 
-                            messageManager.sendMessage(player,
-                                    plugin.getFileManager().getConfig(new File(plugin.getDataFolder(), "language.yml")).getFileConfiguration().getString("Island.Structure.Tool.Position.Message")
-                                            .replace("%position", "1"));
-                            soundManager.playSound(player, CompatibleSound.BLOCK_WOODEN_BUTTON_CLICK_ON.getSound(), 1.0F, 1.0F);
+                                messageManager.sendMessage(player,
+                                        plugin.getFileManager().getConfig(new File(plugin.getDataFolder(), "language.yml")).getFileConfiguration().getString("Island.Structure.Tool.Position.Message")
+                                                .replace("%position", "1"));
+                                soundManager.playSound(player, CompatibleSound.BLOCK_WOODEN_BUTTON_CLICK_ON.getSound(), 1.0F, 1.0F);
+                            }
+                        }
+                    } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                        ItemStack structureTool = StructureUtil.getTool();
+
+                        if ((event.getItem().getType() == structureTool.getType()) && (event.getItem().hasItemMeta()) && (event.getItem().getItemMeta().getDisplayName()
+                                .equals(structureTool.getItemMeta().getDisplayName()))) {
+                            if (player.hasPermission("fabledskyblock.admin.structure.selection") || player.hasPermission("fabledskyblock.admin.structure.*") || player
+                                    .hasPermission("fabledskyblock.admin.*")
+                                    || player.hasPermission("fabledskyblock.*")) {
+                                event.setCancelled(true);
+
+                                plugin.getPlayerDataManager().getPlayerData(player).getArea().setPosition(2, event.getClickedBlock().getLocation());
+
+                                messageManager.sendMessage(player,
+                                        plugin.getFileManager().getConfig(new File(plugin.getDataFolder(), "language.yml")).getFileConfiguration().getString("Island.Structure.Tool.Position.Message")
+                                                .replace("%position", "2"));
+                                soundManager.playSound(player, CompatibleSound.BLOCK_WOODEN_BUTTON_CLICK_ON.getSound(), 1.0F, 1.0F);
+                            }
                         }
                     }
-                } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                    ItemStack structureTool = StructureUtil.getTool();
-
-                    if ((event.getItem().getType() == structureTool.getType()) && (event.getItem().hasItemMeta()) && (event.getItem().getItemMeta().getDisplayName()
-                            .equals(structureTool.getItemMeta().getDisplayName()))) {
-                        if (player.hasPermission("fabledskyblock.admin.structure.selection") || player.hasPermission("fabledskyblock.admin.structure.*") || player
-                                .hasPermission("fabledskyblock.admin.*")
-                                || player.hasPermission("fabledskyblock.*")) {
-                            event.setCancelled(true);
-
-                            plugin.getPlayerDataManager().getPlayerData(player).getArea().setPosition(2, event.getClickedBlock().getLocation());
-
-                            messageManager.sendMessage(player,
-                                    plugin.getFileManager().getConfig(new File(plugin.getDataFolder(), "language.yml")).getFileConfiguration().getString("Island.Structure.Tool.Position.Message")
-                                            .replace("%position", "2"));
-                            soundManager.playSound(player, CompatibleSound.BLOCK_WOODEN_BUTTON_CLICK_ON.getSound(), 1.0F, 1.0F);
-                        }
-                    }
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
             }
         }
     }
