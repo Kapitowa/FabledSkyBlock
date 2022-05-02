@@ -60,6 +60,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class IslandManager {
@@ -1651,13 +1652,13 @@ public class IslandManager {
     }
 
     public Island getIslandAtLocation(org.bukkit.Location location) {
-        for (Island island : new ArrayList<>(getIslands().values())) {
-            if (isLocationAtIsland(island, location)) {
-                return island;
+            for (Island island : new ArrayList<>(getIslands().values())) {
+                if (isLocationAtIsland(island, location)) {
+                    return island;
+                }
             }
-        }
 
-        return null;
+            return null;
     }
 
     public boolean isPlayerProxyingAnotherPlayer(UUID proxying) {

@@ -167,28 +167,30 @@ public class EntityListeners implements Listener {
      */
     @EventHandler(ignoreCancelled = true)
     public void onEntityTarget(EntityTargetEvent event) {
-        org.bukkit.entity.Entity entity = event.getEntity();
-        WorldManager worldManager = plugin.getWorldManager();
-        if (!worldManager.isIslandWorld(entity.getWorld())) return;
+        Bukkit.getScheduler().runTaskAsynchronously(SkyBlock.getInstance(), run -> {
+            org.bukkit.entity.Entity entity = event.getEntity();
+            WorldManager worldManager = plugin.getWorldManager();
+            if (!worldManager.isIslandWorld(entity.getWorld())) return;
 
-        org.bukkit.entity.Entity target = event.getTarget();
-        // Somehow the target can be null, thanks Spigot.
-        if (target == null) return;
+            org.bukkit.entity.Entity target = event.getTarget();
+            // Somehow the target can be null, thanks Spigot.
+            if (target == null) return;
 
-        IslandManager islandManager = plugin.getIslandManager();
-        Island entityIsland = islandManager.getIslandAtLocation(entity.getLocation());
-        Island targetIsland = islandManager.getIslandAtLocation(target.getLocation());
-        // Event not related to Skyblock islands.
-        if (entityIsland == null && targetIsland == null) return;
-        // One entity is on an island, and the other isn't.
-        if (entityIsland == null || targetIsland == null) {
-            event.setCancelled(true);
-            return;
-        }
-        // Both entities are on different islands.
-        if (!entityIsland.getIslandUUID().equals(targetIsland.getIslandUUID())) {
-            event.setCancelled(true);
-        }
+            IslandManager islandManager = plugin.getIslandManager();
+            Island entityIsland = islandManager.getIslandAtLocation(entity.getLocation());
+            Island targetIsland = islandManager.getIslandAtLocation(target.getLocation());
+            // Event not related to Skyblock islands.
+            if (entityIsland == null && targetIsland == null) return;
+            // One entity is on an island, and the other isn't.
+            if (entityIsland == null || targetIsland == null) {
+                event.setCancelled(true);
+                return;
+            }
+            // Both entities are on different islands.
+            if (!entityIsland.getIslandUUID().equals(targetIsland.getIslandUUID())) {
+                event.setCancelled(true);
+            }
+        });
     }
 
     @EventHandler(ignoreCancelled = true)

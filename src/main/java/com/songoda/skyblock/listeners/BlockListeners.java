@@ -407,41 +407,6 @@ public class BlockListeners implements Listener {
             return;
         }
 
-        // Nether mobs
-        if (configLoad.getBoolean("Island.Nether.WaterDoNotFlowNearNetherMobs", false) && worldManager.getIslandWorld(block.getWorld()).equals(IslandWorld.Nether)) {
-            Collection<Entity> entities = block.getWorld().getNearbyEntities(block.getLocation(), 1d, 1d, 1d);
-            if (entities.size() > 0) {
-                for (Entity ent : entities) {
-
-                    boolean witherSkeleton;
-                    if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11)) {
-                        witherSkeleton = ent.getType().equals(EntityType.WITHER_SKELETON);
-                    } else {
-                        witherSkeleton = ent instanceof Skeleton && ((Skeleton) ent).getSkeletonType().equals(Skeleton.SkeletonType.WITHER);
-                    }
-                    if ((((ent instanceof Blaze || ent instanceof MagmaCube) || ent instanceof Wither) || ent instanceof Ghast) || witherSkeleton) {
-                        event.setCancelled(true);
-                        event.getToBlock().getWorld().playSound(block.getLocation(), CompatibleSound.BLOCK_FIRE_EXTINGUISH.getSound(), 1f, 1f);
-                        event.getToBlock().getWorld().playEffect(block.getLocation(), Effect.SMOKE, 1);
-                    } else {
-                        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_16)) {
-                            if (((ent instanceof Piglin || ent instanceof Hoglin) || ent instanceof Strider) || ent instanceof Zoglin) {
-                                event.setCancelled(true);
-                                event.getToBlock().getWorld().playSound(block.getLocation(), CompatibleSound.BLOCK_FIRE_EXTINGUISH.getSound(), 1f, 1f);
-                                event.getToBlock().getWorld().playEffect(block.getLocation(), Effect.SMOKE, 1);
-                            }
-                        } else {
-                            if (ent instanceof PigZombie) {
-                                event.setCancelled(true);
-                                event.getToBlock().getWorld().playSound(block.getLocation(), CompatibleSound.BLOCK_FIRE_EXTINGUISH.getSound(), 1f, 1f);
-                                event.getToBlock().getWorld().playEffect(block.getLocation(), Effect.SMOKE, 1);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         // Generators
         if (this.generatorWaitingLocs.contains(LocationUtil.toBlockLocation(block.getLocation().clone()))) {
             event.setCancelled(true);
