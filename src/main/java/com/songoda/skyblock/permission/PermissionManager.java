@@ -7,7 +7,6 @@ import com.songoda.skyblock.island.IslandRole;
 import com.songoda.skyblock.permission.event.Stoppable;
 import com.songoda.skyblock.permission.permissions.basic.*;
 import com.songoda.skyblock.permission.permissions.listening.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -18,6 +17,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class PermissionManager {
@@ -216,23 +217,37 @@ public class PermissionManager {
     }
 
     public boolean hasPermission(Player player, Island island, BasicPermission permission, boolean reversePermission) {
-        if (player == null)
-            return island.hasPermission(IslandRole.Owner, permission);
 
-        if (player.hasPermission("fabledskyblock.bypass." + permission.getName().toLowerCase()))
-            return !reversePermission;
-
-        switch (island.getRole(player)) {
-            case Owner:
-            case Operator:
-            case Member:
-                return island.hasPermission(IslandRole.Member, permission);
-            case Coop:
-                return island.hasPermission(IslandRole.Coop, permission);
-            case Visitor:
-                return island.hasPermission(IslandRole.Visitor, permission);
+        try {
+            return AsyncPermissions(player, island, permission, reversePermission).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
         return false;
+    }
+
+    public CompletableFuture<Boolean> AsyncPermissions(Player player, Island island, BasicPermission permission, boolean reversePermission) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (player == null)
+                return island.hasPermission(IslandRole.Owner, permission);
+
+            if (player.hasPermission("fabledskyblock.bypass." + permission.getName().toLowerCase()))
+                return !reversePermission;
+
+            switch (island.getRole(player)) {
+                case Owner:
+                case Operator:
+                case Member:
+                    return island.hasPermission(IslandRole.Member, permission);
+                case Coop:
+                    return island.hasPermission(IslandRole.Coop, permission);
+                case Visitor:
+                    return island.hasPermission(IslandRole.Visitor, permission);
+            }
+            return false;
+        });
     }
 
     public boolean hasPermission(Player player, Island island, BasicPermission permission) {

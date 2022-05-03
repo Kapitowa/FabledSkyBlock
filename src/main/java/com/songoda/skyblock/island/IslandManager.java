@@ -26,6 +26,7 @@ import com.songoda.skyblock.invite.Invite;
 import com.songoda.skyblock.invite.InviteManager;
 import com.songoda.skyblock.island.removal.ChunkDeleteSplitter;
 import com.songoda.skyblock.message.MessageManager;
+import com.songoda.skyblock.permission.BasicPermission;
 import com.songoda.skyblock.playerdata.PlayerData;
 import com.songoda.skyblock.playerdata.PlayerDataManager;
 import com.songoda.skyblock.scoreboard.ScoreboardManager;
@@ -62,6 +63,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 public class IslandManager {
     private final SkyBlock plugin;
@@ -679,45 +681,44 @@ public class IslandManager {
         VisitManager visitManager = plugin.getVisitManager();
         FileManager fileManager = plugin.getFileManager();
         BanManager banManager = plugin.getBanManager();
-        CMIUser user = CMI.getInstance().getPlayerManager().getUser(player);
 
         UUID islandOwnerUUID = null;
 
-        Config config = fileManager.getConfig(new File(new File(plugin.getDataFolder().toString() + "/player-data"), user.getUniqueId().toString() + ".yml"));
+        Config config = fileManager.getConfig(new File(new File(plugin.getDataFolder().toString() + "/player-data"), player.getUniqueId().toString() + ".yml"));
         FileConfiguration configLoad = config.getFileConfiguration();
 
-        if (isIslandExist(user.getUniqueId())) {
-            if (configLoad.getString("Island.Owner") == null || !configLoad.getString("Island.Owner").equals(user.getUniqueId().toString())) {
-                deleteIslandData(user.getUniqueId());
+        if (isIslandExist(player.getUniqueId())) {
+            if (configLoad.getString("Island.Owner") == null || !configLoad.getString("Island.Owner").equals(player.getUniqueId().toString())) {
+                deleteIslandData(player.getUniqueId());
                 configLoad.set("Island.Owner", null);
 
                 return;
             }
 
-            islandOwnerUUID = user.getUniqueId();
+            islandOwnerUUID = player.getUniqueId();
         } else {
             if (configLoad.getString("Island.Owner") != null) {
                 islandOwnerUUID = FastUUID.parseUUID(configLoad.getString("Island.Owner"));
             }
         }
-    
+
         if (islandOwnerUUID != null && !containsIsland(islandOwnerUUID)) {
             config = fileManager.getConfig(new File(plugin.getDataFolder().toString() + "/island-data", islandOwnerUUID.toString() + ".yml"));
-        
+
             if (config.getFileConfiguration().getString("Location") == null) {
                 deleteIslandData(islandOwnerUUID);
                 configLoad.set("Island.Owner", null);
-            
+
                 return;
             }
-        
-            Island island = new Island(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer());
+
+            Island island = new Island(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID));
             islandStorage.put(islandOwnerUUID, island);
-        
+
             for (IslandWorld worldList : IslandWorld.getIslandWorlds()) {
                 prepareIsland(island, worldList);
             }
-        
+
             if (!visitManager.hasIsland(island.getOwnerUUID())) {
                 visitManager.createIsland(island.getOwnerUUID(),
                         new IslandLocation[]{island.getIslandLocation(IslandWorld.Normal, IslandEnvironment.Island), island.getIslandLocation(IslandWorld.Nether, IslandEnvironment.Island),
@@ -725,11 +726,11 @@ public class IslandManager {
                         island.getSize(), island.getRole(IslandRole.Member).size() + island.getRole(IslandRole.Operator).size() + 1, island.getBankBalance(), visitManager.getIslandSafeLevel(island.getOwnerUUID()),
                         island.getLevel(), island.getMessage(IslandMessage.Signature), island.getStatus());
             }
-        
+
             if (!banManager.hasIsland(island.getOwnerUUID())) {
                 banManager.createIsland(island.getOwnerUUID());
             }
-        
+
             Bukkit.getScheduler().runTask(plugin, () ->
                     Bukkit.getServer().getPluginManager().callEvent(new IslandLoadEvent(island.getAPIWrapper())));
         }
@@ -1652,6 +1653,19 @@ public class IslandManager {
     }
 
     public Island getIslandAtLocation(org.bukkit.Location location) {
+        try {
+            return AsyncLocation(location).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public CompletableFuture<Island> AsyncLocation(org.bukkit.Location location) {
+        return CompletableFuture.supplyAsync(() -> {
             for (Island island : new ArrayList<>(getIslands().values())) {
                 if (isLocationAtIsland(island, location)) {
                     return island;
@@ -1659,6 +1673,7 @@ public class IslandManager {
             }
 
             return null;
+        });
     }
 
     public boolean isPlayerProxyingAnotherPlayer(UUID proxying) {

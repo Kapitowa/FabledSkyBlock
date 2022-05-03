@@ -37,7 +37,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class Island {
 
@@ -588,12 +591,25 @@ public class Island {
     }
 
     public Set<UUID> getRole(IslandRole role) {
+        try {
+            return AsyncGetRole(role).get(); // async getting role
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-        Set<UUID> islandRoles = new HashSet<>();
+    public CompletableFuture<Set<UUID>> AsyncGetRole(IslandRole role) {
+        return CompletableFuture.supplyAsync(() -> {
+            Set<UUID> islandRoles = new HashSet<>();
 
             if (role == IslandRole.Owner) {
                 islandRoles.add(getOwnerUUID());
             } else {
+
                 Config config = plugin.getFileManager().getConfig(
                         new File(new File(plugin.getDataFolder().toString() + "/island-data"), ownerUUID.toString() + ".yml"));
                 FileConfiguration configLoad = config.getFileConfiguration();
@@ -604,10 +620,13 @@ public class Island {
                     }
                 }
             }
-        return islandRoles;
+
+            return islandRoles;
+        });
     }
 
     public IslandRole getRole(OfflinePlayer player) {
+
         if(isCoopPlayer(player.getUniqueId())){
             return IslandRole.Coop; // TODO Rework Coop status - Fabrimat
         }

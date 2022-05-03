@@ -1,5 +1,6 @@
 package com.songoda.skyblock.listeners;
 
+import com.Zrips.CMI.CMI;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.songoda.skyblock.SkyBlock;
@@ -43,7 +44,7 @@ public class JoinListeners implements Listener {
         CooldownManager cooldownManager = plugin.getCooldownManager();
         IslandManager islandManager = plugin.getIslandManager();
         
-        Player player = event.getPlayer();
+        Player player = CMI.getInstance().getPlayerManager().getUser(event.getPlayer()).getPlayer();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             userCacheManager.addUser(player.getUniqueId(), player.getName());
             userCacheManager.saveAsync();
