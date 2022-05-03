@@ -206,6 +206,12 @@ public class IslandManager {
 
         PlayerData data = plugin.getPlayerDataManager().getPlayerData(player);
 
+        if (!player.hasPermission(structure.getPermission()) && structure.isPermission() != false) {
+            SkyBlock.getInstance().getMessageManager().sendMessage(player,
+                    plugin.getLanguage().getString("Island.Creator.Selector.Permission.Message"));
+            return false;
+        }
+
         long amt = 0;
 
         if (data != null) {
