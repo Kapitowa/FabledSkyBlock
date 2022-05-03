@@ -1,5 +1,6 @@
 package com.songoda.skyblock.placeholder;
 
+import com.Zrips.CMI.CMI;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.skyblock.SkyBlock;
@@ -164,7 +165,7 @@ public class PlaceholderProcessor {
                     if (targetPlayer == null) {
                         returnValue = TextUtils.formatText(
                                 placeholdersLoad.getString("Placeholders.fabledskyblock_island_owner.Non-empty.Other").replace(
-                                        "{PLACEHOLDER}", Bukkit.getServer().getOfflinePlayer(islandOwnerUUID).getName()));
+                                        "{PLACEHOLDER}", CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getName()));
                     } else {
                         if (targetPlayer.getName().equals(player.getName())) {
                             returnValue = TextUtils.formatText(

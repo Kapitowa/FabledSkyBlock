@@ -677,12 +677,14 @@ public class IslandManager {
         }
     }
 
-    public void loadIsland(org.bukkit.OfflinePlayer player) {
+    public void loadIsland(org.bukkit.OfflinePlayer player1) {
         VisitManager visitManager = plugin.getVisitManager();
         FileManager fileManager = plugin.getFileManager();
         BanManager banManager = plugin.getBanManager();
 
         UUID islandOwnerUUID = null;
+
+        org.bukkit.OfflinePlayer player = CMI.getInstance().getPlayerManager().getUser(player1).getOfflinePlayer();
 
         Config config = fileManager.getConfig(new File(new File(plugin.getDataFolder().toString() + "/player-data"), player.getUniqueId().toString() + ".yml"));
         FileConfiguration configLoad = config.getFileConfiguration();
@@ -815,26 +817,26 @@ public class IslandManager {
         VisitManager visitManager = plugin.getVisitManager();
         FileManager fileManager = plugin.getFileManager();
         BanManager banManager = plugin.getBanManager();
-        
+
         Config config = fileManager.getConfig(islandFile);
         FileConfiguration configLoad = config.getFileConfiguration();
-    
+
         UUID islandOwnerUUID = FastUUID.parseUUID(islandFile.getName().split("\\.")[0]);
-    
+
         if (config.getFileConfiguration().getString("Location") == null) {
             deleteIslandData(islandOwnerUUID);
             configLoad.set("Island.Owner", null);
-        
+
             return;
         }
-    
-        Island island = new Island(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer());
+
+        Island island = new Island(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID));
         islandStorage.put(islandOwnerUUID, island);
-    
+
         for (IslandWorld worldList : IslandWorld.getIslandWorlds()) {
             prepareIsland(island, worldList);
         }
-    
+
         if (!visitManager.hasIsland(island.getOwnerUUID())) {
             visitManager.createIsland(island.getOwnerUUID(),
                     new IslandLocation[]{island.getIslandLocation(IslandWorld.Normal, IslandEnvironment.Island), island.getIslandLocation(IslandWorld.Nether, IslandEnvironment.Island),
@@ -842,11 +844,11 @@ public class IslandManager {
                     island.getSize(), island.getRole(IslandRole.Member).size() + island.getRole(IslandRole.Operator).size() + 1, island.getBankBalance(), visitManager.getIslandSafeLevel(island.getOwnerUUID()),
                     island.getLevel(), island.getMessage(IslandMessage.Signature), island.getStatus());
         }
-    
+
         if (!banManager.hasIsland(island.getOwnerUUID())) {
             banManager.createIsland(island.getOwnerUUID());
         }
-    
+
         Bukkit.getScheduler().runTask(plugin, () ->
                 Bukkit.getServer().getPluginManager().callEvent(new IslandLoadEvent(island.getAPIWrapper())));
     }
@@ -900,36 +902,36 @@ public class IslandManager {
     }
 
     public void loadIslandAtLocation(Location location) {
-        FileManager fileManager = plugin.getFileManager();
-        File configFile = new File(plugin.getDataFolder(), "island-data");
+            FileManager fileManager = plugin.getFileManager();
+            File configFile = new File(plugin.getDataFolder(), "island-data");
 
-        if (!configFile.exists()) return;
-        
-        File[] files = configFile.listFiles();
-        if(files == null) return;
+            if (!configFile.exists()) return;
 
-        for (File file : files) {
-            if (file != null && file.getName().contains(".yml") && file.getName().length() > 35) {
-                try {
-                    Config config = new FileManager.Config(fileManager, file);
-                    FileConfiguration configLoad = config.getFileConfiguration();
+            File[] files = configFile.listFiles();
+            if(files == null) return;
 
-                    int size = 10;
-                    if (configLoad.getString("Size") != null) {
-                        size = configLoad.getInt("Size");
+            for (File file : files) {
+                if (file != null && file.getName().contains(".yml") && file.getName().length() > 35) {
+                    try {
+                        Config config = new FileManager.Config(fileManager, file);
+                        FileConfiguration configLoad = config.getFileConfiguration();
+
+                        int size = 10;
+                        if (configLoad.getString("Size") != null) {
+                            size = configLoad.getInt("Size");
+                        }
+
+                        Location islandLocation = fileManager.getLocation(config, "Location.Normal.Island", false);
+
+                        if (LocationUtil.isLocationInLocationRadius(location, islandLocation, size)) {
+                            loadIsland(file);
+                            return;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                    Location islandLocation = fileManager.getLocation(config, "Location.Normal.Island", false);
-
-                    if (LocationUtil.isLocationInLocationRadius(location, islandLocation, size)) {
-                        loadIsland(file);
-                        return;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
-        }
     }
 
     public void unloadIsland(Island island, org.bukkit.OfflinePlayer player) {
@@ -1281,11 +1283,11 @@ public class IslandManager {
         }
     }
 
-    public Island getIsland(org.bukkit.OfflinePlayer offlinePlayer) {
+    public Island getIsland(org.bukkit.OfflinePlayer offlinePlayer1) {
         PlayerDataManager playerDataManager = plugin.getPlayerDataManager();
 
-        CMIUser user = CMI.getInstance().getPlayerManager().getUser(offlinePlayer);
-        UUID uuid = user.getUniqueId();
+        org.bukkit.OfflinePlayer offlinePlayer = CMI.getInstance().getPlayerManager().getUser(offlinePlayer1).getOfflinePlayer();
+        UUID uuid = offlinePlayer.getUniqueId();
         if (islandProxies.containsKey(uuid)) uuid = islandProxies.get(uuid);
 
         // TODO: Find out how this can be fixed without this, for some reason
@@ -1307,7 +1309,7 @@ public class IslandManager {
                 }
             }
         } else {
-            OfflinePlayer offlinePlayerData = new OfflinePlayer(user.getUniqueId());
+            OfflinePlayer offlinePlayerData = new OfflinePlayer(offlinePlayer.getUniqueId());
             loadIsland(offlinePlayer);
 
             if (offlinePlayerData.getOwner() != null && islandStorage.containsKey(offlinePlayerData.getOwner())) {

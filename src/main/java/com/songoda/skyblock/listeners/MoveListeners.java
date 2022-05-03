@@ -167,7 +167,9 @@ public class MoveListeners implements Listener {
             Location playerLoc = player.getLocation();
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 // Load the island they are now on if one exists
-                islandManager.loadIslandAtLocation(playerLoc);
+                if (islandManager.getIslandAtLocation(playerLoc) == null) {
+                    islandManager.loadIslandAtLocation(playerLoc);
+                }
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     Island loadedIsland = islandManager.getIslandAtLocation(playerLoc);
                     if (loadedIsland != null) {
@@ -175,16 +177,16 @@ public class MoveListeners implements Listener {
                             playerData.setIsland(loadedIsland.getOwnerUUID());
                             return;
                         }
-        
+
                         if(loadedIsland.getStatus().equals(IslandStatus.OPEN) ||
                                 (loadedIsland.getStatus().equals(IslandStatus.WHITELISTED) && loadedIsland.isPlayerWhitelisted(player))){
                             loadedIsland.getVisit().addVisitor(player.getUniqueId());
                             return;
                         }
                     }
-    
+
                     LocationUtil.teleportPlayerToSpawn(player);
-    
+
                     messageManager.sendMessage(player,
                             plugin.getLanguage().getString("Island.WorldBorder.Disappeared.Message"));
                     soundManager.playSound(player, CompatibleSound.ENTITY_ENDERMAN_TELEPORT.getSound(), 1.0F, 1.0F);
