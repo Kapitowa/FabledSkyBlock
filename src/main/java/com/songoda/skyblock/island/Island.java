@@ -29,7 +29,6 @@ import org.bukkit.WeatherType;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -37,10 +36,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 public class Island {
 
@@ -591,38 +588,24 @@ public class Island {
     }
 
     public Set<UUID> getRole(IslandRole role) {
-        try {
-            return AsyncGetRole(role).get(); // async getting role
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+        Set<UUID> islandRoles = new HashSet<>();
 
-    public CompletableFuture<Set<UUID>> AsyncGetRole(IslandRole role) {
-        return CompletableFuture.supplyAsync(() -> {
-            Set<UUID> islandRoles = new HashSet<>();
+        if (role == IslandRole.Owner) {
+            islandRoles.add(getOwnerUUID());
+        } else {
 
-            if (role == IslandRole.Owner) {
-                islandRoles.add(getOwnerUUID());
-            } else {
+            Config config = plugin.getFileManager().getConfig(
+                    new File(new File(plugin.getDataFolder().toString() + "/island-data"), ownerUUID.toString() + ".yml"));
+            FileConfiguration configLoad = config.getFileConfiguration();
 
-                Config config = plugin.getFileManager().getConfig(
-                        new File(new File(plugin.getDataFolder().toString() + "/island-data"), ownerUUID.toString() + ".yml"));
-                FileConfiguration configLoad = config.getFileConfiguration();
-
-                if (configLoad.getString(role.name() + "s") != null) {
-                    for (String playerList : configLoad.getStringList(role.name() + "s")) {
-                        islandRoles.add(FastUUID.parseUUID(playerList));
-                    }
+            if (configLoad.getString(role.name() + "s") != null) {
+                for (String playerList : configLoad.getStringList(role.name() + "s")) {
+                    islandRoles.add(FastUUID.parseUUID(playerList));
                 }
             }
+        }
 
-            return islandRoles;
-        });
+        return islandRoles;
     }
 
     public IslandRole getRole(OfflinePlayer player) {
@@ -748,15 +731,27 @@ public class Island {
     }
 
     public boolean hasPermission(IslandRole role, BasicPermission permission) {
-        if (islandPermissions.containsKey(role)) {
-            for (IslandPermission islandPermission : islandPermissions.get(role)) {
-                if (islandPermission.getPermission().equals(permission))
-                    return islandPermission.getStatus();
-            }
+        try {
+            return AsyncIslandPermCheck(role, permission).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
-            return true; //TODO: Default setting value
+        return true;
     }
 
+    public CompletableFuture<Boolean> AsyncIslandPermCheck(IslandRole role, BasicPermission permission) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (islandPermissions.containsKey(role)) {
+                for (IslandPermission islandPermission : islandPermissions.get(role)) {
+                    if (islandPermission.getPermission().equals(permission))
+                        return islandPermission.getStatus();
+                }
+            }
+            return true; //TODO: Default setting value
+        });
+    }
 
     public IslandPermission getPermission(IslandRole role, BasicPermission permission) {
         if (islandPermissions.containsKey(role)) {

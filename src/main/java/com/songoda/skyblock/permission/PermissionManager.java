@@ -218,35 +218,36 @@ public class PermissionManager {
 
     public boolean hasPermission(Player player, Island island, BasicPermission permission, boolean reversePermission) {
 
+        if (player == null)
+            return island.hasPermission(IslandRole.Owner, permission);
+
         try {
-            return AsyncPermissions(player, island, permission, reversePermission).get();
+            if (AsyncPermCheck(player, permission).get())
+                return !reversePermission;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+        switch (island.getRole(player)) {
+            case Owner:
+            case Operator:
+            case Member:
+                return island.hasPermission(IslandRole.Member, permission);
+            case Coop:
+                return island.hasPermission(IslandRole.Coop, permission);
+            case Visitor:
+                return island.hasPermission(IslandRole.Visitor, permission);
+        }
         return false;
     }
 
-    public CompletableFuture<Boolean> AsyncPermissions(Player player, Island island, BasicPermission permission, boolean reversePermission) {
+    public CompletableFuture<Boolean> AsyncPermCheck(Player player, BasicPermission permission) {
         return CompletableFuture.supplyAsync(() -> {
-            if (player == null)
-                return island.hasPermission(IslandRole.Owner, permission);
-
             if (player.hasPermission("fabledskyblock.bypass." + permission.getName().toLowerCase()))
-                return !reversePermission;
-
-            switch (island.getRole(player)) {
-                case Owner:
-                case Operator:
-                case Member:
-                    return island.hasPermission(IslandRole.Member, permission);
-                case Coop:
-                    return island.hasPermission(IslandRole.Coop, permission);
-                case Visitor:
-                    return island.hasPermission(IslandRole.Visitor, permission);
-            }
-            return false;
+                return true;
+            else return false;
         });
     }
 
