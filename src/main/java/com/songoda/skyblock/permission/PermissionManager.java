@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class PermissionManager {
@@ -221,14 +219,8 @@ public class PermissionManager {
         if (player == null)
             return island.hasPermission(IslandRole.Owner, permission);
 
-        try {
-            if (AsyncPermCheck(player, permission).get())
-                return !reversePermission;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        if (player.hasPermission("fabledskyblock.bypass." + permission.getName().toLowerCase()))
+            return !reversePermission;
 
         switch (island.getRole(player)) {
             case Owner:
@@ -241,14 +233,6 @@ public class PermissionManager {
                 return island.hasPermission(IslandRole.Visitor, permission);
         }
         return false;
-    }
-
-    public CompletableFuture<Boolean> AsyncPermCheck(Player player, BasicPermission permission) {
-        return CompletableFuture.supplyAsync(() -> {
-            if (player.hasPermission("fabledskyblock.bypass." + permission.getName().toLowerCase()))
-                return true;
-            else return false;
-        });
     }
 
     public boolean hasPermission(Player player, Island island, BasicPermission permission) {

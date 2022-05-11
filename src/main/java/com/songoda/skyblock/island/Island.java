@@ -731,26 +731,13 @@ public class Island {
     }
 
     public boolean hasPermission(IslandRole role, BasicPermission permission) {
-        try {
-            return AsyncIslandPermCheck(role, permission).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
-    public CompletableFuture<Boolean> AsyncIslandPermCheck(IslandRole role, BasicPermission permission) {
-        return CompletableFuture.supplyAsync(() -> {
-            if (islandPermissions.containsKey(role)) {
-                for (IslandPermission islandPermission : islandPermissions.get(role)) {
-                    if (islandPermission.getPermission().equals(permission))
-                        return islandPermission.getStatus();
-                }
+        if (islandPermissions.containsKey(role)) {
+            for (IslandPermission islandPermission : islandPermissions.get(role)) {
+                if (islandPermission.getPermission().equals(permission))
+                    return islandPermission.getStatus();
             }
-            return true; //TODO: Default setting value
-        });
+        }
+        return true; //TODO: Default setting value
     }
 
     public IslandPermission getPermission(IslandRole role, BasicPermission permission) {
