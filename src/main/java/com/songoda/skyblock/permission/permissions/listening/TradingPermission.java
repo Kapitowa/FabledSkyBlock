@@ -28,9 +28,7 @@ public class TradingPermission extends ListeningPermission {
 
         Player player = event.getPlayer();
 
-        if (event.getRightClicked().getType() == EntityType.VILLAGER
-                || ServerVersion.isServerVersionAtLeast(ServerVersion.V1_14)
-                && event.getRightClicked().getType() == EntityType.WANDERING_TRADER)
+        if (event.getRightClicked().getType() == EntityType.VILLAGER || event.getRightClicked().getType() == EntityType.WANDERING_TRADER)
             cancelAndMessage(event, player, plugin, messageManager);
     }
 }
