@@ -1,5 +1,6 @@
 package com.songoda.skyblock.utils.player;
 
+import com.Zrips.CMI.CMI;
 import com.eatthepath.uuid.FastUUID;
 import com.songoda.skyblock.SkyBlock;
 import com.songoda.skyblock.usercache.UserCacheManager;
@@ -27,7 +28,7 @@ public class OfflinePlayer {
         SkyBlock plugin = SkyBlock.getInstance();
         UserCacheManager userCacheManager = plugin.getUserCacheManager();
         
-        bukkitOfflinePlayer = Bukkit.getServer().getOfflinePlayer(name);
+        bukkitOfflinePlayer = CMI.getInstance().getPlayerManager().getUser(name).getOfflinePlayer();
         
         if (userCacheManager.hasUser(name)) {
             this.uuid = userCacheManager.getUser(name);
@@ -54,7 +55,7 @@ public class OfflinePlayer {
         SkyBlock plugin = SkyBlock.getInstance();
         UserCacheManager userCacheManager = plugin.getUserCacheManager();
     
-        bukkitOfflinePlayer = Bukkit.getServer().getOfflinePlayer(uuid);
+        bukkitOfflinePlayer = CMI.getInstance().getPlayerManager().getUser(uuid).getOfflinePlayer();
 
         this.name = bukkitOfflinePlayer.getName();
         this.uuid = uuid;

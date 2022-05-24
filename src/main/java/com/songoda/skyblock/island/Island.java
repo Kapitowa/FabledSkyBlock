@@ -59,7 +59,7 @@ public class Island {
 
     public Island(@Nonnull OfflinePlayer player) {
         this.plugin = SkyBlock.getInstance();
-        CMIUser user = CMI.getInstance().getPlayerManager().getUser(player);
+        OfflinePlayer user = CMI.getInstance().getPlayerManager().getUser(player).getOfflinePlayer();
 
         FileManager fileManager = plugin.getFileManager();
 

@@ -1,5 +1,6 @@
 package com.songoda.skyblock.command.commands.island;
 
+import com.Zrips.CMI.CMI;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.skyblock.command.SubCommand;
 import com.songoda.skyblock.config.FileManager;
@@ -72,7 +73,7 @@ public class OwnerCommand extends SubCommand {
                     UUID targetPlayerUUID;
                     String targetPlayerName;
 
-                    Player targetPlayer = Bukkit.getServer().getPlayer(args[0]);
+                    Player targetPlayer = CMI.getInstance().getPlayerManager().getUser(args[0]).getPlayer();
 
                     if (targetPlayer == null) {
                         OfflinePlayer offlinePlayer = new OfflinePlayer(args[0]);
