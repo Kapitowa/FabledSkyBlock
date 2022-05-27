@@ -95,9 +95,9 @@ public class OwnerCommand extends SubCommand {
                                 configLoad.getString("Command.Island.Ownership.Yourself.Message"));
                         soundManager.playSound(player, CompatibleSound.BLOCK_ANVIL_LAND.getSound(), 1.0F, 1.0F);
                     } else if (cooldownManager.hasPlayer(CooldownType.Ownership,
-                            Bukkit.getServer().getOfflinePlayer(island.getOwnerUUID()))) {
+                            CMI.getInstance().getPlayerManager().getUser(island.getOwnerUUID()).getOfflinePlayer())) {
                         CooldownPlayer cooldownPlayer = cooldownManager.getCooldownPlayer(CooldownType.Ownership,
-                                Bukkit.getServer().getOfflinePlayer(island.getOwnerUUID()));
+                                CMI.getInstance().getPlayerManager().getUser(island.getOwnerUUID()).getOfflinePlayer());
                         Cooldown cooldown = cooldownPlayer.getCooldown();
                         long[] durationTime = NumberUtil.getDuration(cooldown.getTime());
 
@@ -227,7 +227,7 @@ public class OwnerCommand extends SubCommand {
                         islandManager.giveOwnership(island, player);
 
                         cooldownManager.createPlayer(CooldownType.Ownership,
-                                Bukkit.getServer().getOfflinePlayer(island.getOwnerUUID()));
+                                CMI.getInstance().getPlayerManager().getUser(island.getOwnerUUID()).getOfflinePlayer());
                     } else {
                         messageManager.sendMessage(player,
                                 configLoad.getString("Command.Island.Ownership.Password.Incorrect.Message"));

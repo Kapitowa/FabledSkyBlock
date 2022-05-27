@@ -39,13 +39,12 @@ public class TeleportCommand extends SubCommand {
         FileConfiguration configLoad = config.getFileConfiguration();
 
         if (args.length == 1) {
-            if (CMI.getInstance().getPlayerManager().getUser(args[0]) == null) {
+            if (CMI.getInstance().getPlayerManager().getUser(args[0]).getOfflinePlayer() == null) {
                 messageManager.sendMessage(player, configLoad.getString("Command.Island.Teleport.Island.None.Message"));
                 soundManager.playSound(player, CompatibleSound.BLOCK_ANVIL_LAND.getSound(), 1.0F, 1.0F);
                 return;
             }
-            CMIUser user = CMI.getInstance().getPlayerManager().getUser(args[0]);
-            OfflinePlayer offlinePlayer = user.getPlayer();
+            OfflinePlayer offlinePlayer = CMI.getInstance().getPlayerManager().getUser(args[0]).getOfflinePlayer();
             Island island = islandManager.getIsland(offlinePlayer);
             if (island == null) {
                 messageManager.sendMessage(player, configLoad.getString("Command.Island.Teleport.Island.None.Message", "Command.Island.Teleport.Island.None.Message"));
@@ -73,11 +72,11 @@ public class TeleportCommand extends SubCommand {
                     boolean isWhitelistedPlayer = false;
 
                     if (islandManager.containsIsland(islandOwnerUUID)) {
-                        if (islandManager.getIsland(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID)).isCoopPlayer(player.getUniqueId())) {
+                        if (islandManager.getIsland(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer()).isCoopPlayer(player.getUniqueId())) {
                             isCoopPlayer = true;
                         }
 
-                        if (visit.getStatus().equals(IslandStatus.WHITELISTED) && islandManager.getIsland(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID)).isPlayerWhitelisted(player.getUniqueId())) {
+                        if (visit.getStatus().equals(IslandStatus.WHITELISTED) && islandManager.getIsland(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer()).isPlayerWhitelisted(player.getUniqueId())) {
                             isWhitelistedPlayer = true;
                         }
 
@@ -93,10 +92,10 @@ public class TeleportCommand extends SubCommand {
                             player.hasPermission("fabledskyblock.*")) {
 
                         if (!islandManager.containsIsland(islandOwnerUUID)) {
-                            islandManager.loadIsland(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID));
+                            islandManager.loadIsland(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer());
                         }
 
-                        islandManager.visitIsland(player, islandManager.getIsland(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID)));
+                        islandManager.visitIsland(player, islandManager.getIsland(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer()));
 
                         messageManager.sendMessage(player, configLoad.getString("Command.Island.Teleport.Teleported.Other.Message").replace("%player", args[0]));
                         soundManager.playSound(player, CompatibleSound.ENTITY_ENDERMAN_TELEPORT.getSound(), 1.0F, 1.0F);

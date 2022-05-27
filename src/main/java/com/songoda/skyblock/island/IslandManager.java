@@ -416,10 +416,12 @@ public class IslandManager {
         return true;
     }
 
-    public synchronized void giveOwnership(Island island, org.bukkit.OfflinePlayer player) {
+    public synchronized void giveOwnership(Island island, org.bukkit.OfflinePlayer offlinePlayer) {
         PlayerDataManager playerDataManager = plugin.getPlayerDataManager();
         CooldownManager cooldownManager = plugin.getCooldownManager();
         FileManager fileManager = plugin.getFileManager();
+
+        org.bukkit.OfflinePlayer player = CMI.getInstance().getPlayerManager().getUser(offlinePlayer).getOfflinePlayer();
 
         if (island.isDeleted()) {
             return;
@@ -487,7 +489,7 @@ public class IslandManager {
             plugin.getBanManager().transfer(uuid2, player.getUniqueId());
             plugin.getInviteManager().tranfer(uuid2, player.getUniqueId());
 
-            org.bukkit.OfflinePlayer player1 = Bukkit.getServer().getOfflinePlayer(uuid2);
+            org.bukkit.OfflinePlayer player1 = CMI.getInstance().getPlayerManager().getUser(uuid2).getOfflinePlayer();
 
             cooldownManager.transferPlayer(CooldownType.Levelling, player1, player);
             cooldownManager.transferPlayer(CooldownType.Ownership, player1, player);
@@ -573,7 +575,7 @@ public class IslandManager {
         plugin.getBanManager().deleteIsland(island.getOwnerUUID());
         plugin.getVisitManager().removeVisitors(island, VisitManager.Removal.Deleted);
 
-        org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getServer().getOfflinePlayer(island.getOwnerUUID());
+        org.bukkit.OfflinePlayer offlinePlayer = CMI.getInstance().getPlayerManager().getUser(island.getOwnerUUID()).getOfflinePlayer();
         cooldownManager.removeCooldownPlayer(CooldownType.Levelling, offlinePlayer);
         cooldownManager.removeCooldownPlayer(CooldownType.Ownership, offlinePlayer);
 
@@ -720,7 +722,7 @@ public class IslandManager {
                 return;
             }
 
-            Island island = new Island(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID));
+            Island island = new Island(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer());
             islandStorage.put(islandOwnerUUID, island);
 
             for (IslandWorld worldList : IslandWorld.getIslandWorlds()) {
@@ -836,7 +838,7 @@ public class IslandManager {
             return;
         }
 
-        Island island = new Island(Bukkit.getServer().getOfflinePlayer(islandOwnerUUID));
+        Island island = new Island(CMI.getInstance().getPlayerManager().getUser(islandOwnerUUID).getOfflinePlayer());
         islandStorage.put(islandOwnerUUID, island);
 
         for (IslandWorld worldList : IslandWorld.getIslandWorlds()) {
@@ -1431,7 +1433,7 @@ public class IslandManager {
             PlayerData playerData = playerDataManager.getPlayerData(player);
 
             if (playerData.getIsland() != null) {
-                org.bukkit.OfflinePlayer offlinePlayer = Bukkit.getServer().getOfflinePlayer(playerData.getIsland());
+                org.bukkit.OfflinePlayer offlinePlayer = CMI.getInstance().getPlayerManager().getUser(playerData.getIsland()).getOfflinePlayer();
                 Island island = getIsland(offlinePlayer);
 
                 return island;

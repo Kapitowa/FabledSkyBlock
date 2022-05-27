@@ -27,12 +27,18 @@ public class OfflinePlayer {
     public OfflinePlayer(String name) {
         SkyBlock plugin = SkyBlock.getInstance();
         UserCacheManager userCacheManager = plugin.getUserCacheManager();
-        
-        bukkitOfflinePlayer = CMI.getInstance().getPlayerManager().getUser(name).getOfflinePlayer();
+
+        try {
+            bukkitOfflinePlayer = CMI.getInstance().getPlayerManager().getUser(name).getOfflinePlayer();
+        }
+        catch (NullPointerException e)
+        {
+            bukkitOfflinePlayer = Bukkit.getServer().getOfflinePlayer(name);
+        }
         
         if (userCacheManager.hasUser(name)) {
             this.uuid = userCacheManager.getUser(name);
-            bukkitOfflinePlayer = Bukkit.getServer().getOfflinePlayer(uuid);
+            bukkitOfflinePlayer = CMI.getInstance().getPlayerManager().getUser(uuid).getOfflinePlayer();
         } else {
             this.uuid = bukkitOfflinePlayer.getUniqueId();
         }

@@ -123,7 +123,7 @@ public class PlayerDataManager {
     }
 
     public PlayerData getPlayerData(Player player) { //fix
-        CMIUser user = CMI.getInstance().getPlayerManager().getUser(player);
+        Player user = CMI.getInstance().getPlayerManager().getUser(player).getPlayer();
         return getPlayerData(user.getUniqueId());
     }
 
